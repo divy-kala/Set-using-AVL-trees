@@ -62,7 +62,8 @@ public:
     }
     void Setpar(node * par, node *cur) //new parent for this, and make it the same direction child as cur
     {
-        if(par == nullptr) {
+        if(par == nullptr)
+        {
             this->parent = nullptr;
 
         }
@@ -108,7 +109,8 @@ public:
             height = Getright()->Getht() + 1;
         else if(Getright() == nullptr)
             height = Getleft()->Getht() + 1;
-        else{
+        else
+        {
             int x = Getright()->Getht();
             int y = Getleft()->Getht();
             height = max (x, y) + 1;
@@ -155,9 +157,10 @@ public:
 
     bool contains (long key)
     {
-        contains_helper(key, root);
+        contains_helper(key, Getroot());
 
     }
+
     bool contains_helper (long key, node * cur)
     {
         if(cur == NULL)
@@ -220,8 +223,10 @@ public:
                 insert_helper (key, cur->Getleft() );
 
             int x;
-            if( cur->Getright() == nullptr) x = cur->Getleft()->Getht() + 1;
-            else x = cur->Getleft()->Getht() - cur->Getright()->Getht() ;
+            if( cur->Getright() == nullptr)
+                x = cur->Getleft()->Getht() + 1;
+            else
+                x = cur->Getleft()->Getht() - cur->Getright()->Getht() ;
             //TODO:Handle this for when duplicates are allowed
             if(x > 1)
             {
@@ -248,8 +253,10 @@ public:
             else
                 insert_helper (key, cur->Getright() );
             int x;
-            if( cur->Getleft() == nullptr) x = cur->Getright()->Getht() + 1;
-            else x = cur->Getright()->Getht() - cur->Getleft()->Getht()  ;
+            if( cur->Getleft() == nullptr)
+                x = cur->Getright()->Getht() + 1;
+            else
+                x = cur->Getright()->Getht() - cur->Getleft()->Getht()  ;
             //TODO:Handle this for when duplicates are allowed
             if(x > 1)
             {
@@ -270,90 +277,131 @@ public:
         cur->updateht();
 
     }
-
+    long curclosest;
     long closest (long key)
     {
-        return closest_helper(key, root);
+        curclosest= Getroot()->Getkey();
+        return closest_helper(key, Getroot());
 
     }
     long closest_helper (long key, node * cur)
     {
 
+
         if(cur->Getkey() == key)
         {
-            return cur->Getkey();
+            curclosest = key;
+            return curclosest;
         }
         else if (cur->Getkey() > key)
         {
-            return contains_helper (key, cur->Getleft() );
+
+            long k= cur->Getkey();
+
+            if( abs(k-key) <= abs(curclosest-key) )
+            {
+                if(abs(k-key) ==  abs(curclosest-key))
+                    curclosest = k < curclosest? k : curclosest;
+                else
+                {
+                    curclosest = k;
+                }
+            }
+
+            if(cur->Getleft() != nullptr)
+            {
+                return closest_helper (key, cur->Getleft() );
+
+            }
+            else
+            {
+                return curclosest;
+            }
         }
         else if (cur->Getkey() < key)
         {
-            return contains_helper (key, cur->Getright() );
+            long k= cur->Getkey();
+            if( abs(k-key) <= abs(curclosest-key) )
+            {
+                if(abs(k-key) ==  abs(curclosest-key))
+                    curclosest = k < curclosest? k : curclosest;
+                else
+                {
+                    curclosest = k;
+                }
+
+            }
+            if(cur->Getright() != nullptr)
+                return closest_helper (key, cur->Getright() );
+            else
+                return curclosest;
         }
         //FIX: handle base case
     }
 
 
+
 protected:
 
 private:
-    node * root;
+node * root;
 
-    void R( node * cur)
+void R( node * cur)
+{
+    node *p, *q, *ctemp;
+    p=cur;
+    q=p->Getleft();
+    ctemp = q->Getright();
+
+    q->Setpar(p->Getpar(), p);
+    if(q->Getpar() == nullptr)
     {
-        node *p, *q, *ctemp;
-        p=cur;
-        q=p->Getleft();
-        ctemp = q->Getright();
-
-        q->Setpar(p->Getpar(), p);
-        if(q->Getpar() == nullptr) {
-            root =q;
-        }
-        q->Setrchild(p);
-        p->Setlchild(ctemp);
-        p->updateht();
-        q->updateht();
-
+        root =q;
     }
+    q->Setrchild(p);
+    p->Setlchild(ctemp);
+    p->updateht();
+    q->updateht();
 
-    void L( node * cur)
+}
+
+void L( node * cur)
+{
+    node *p, *q, *ctemp;
+    p=cur;
+    q=p->Getright();
+    ctemp = q->Getleft();
+
+    q->Setpar(p->Getpar(), p); //TODO check precedence
+    if(q->Getpar() == nullptr)
     {
-        node *p, *q, *ctemp;
-        p=cur;
-        q=p->Getright();
-        ctemp = q->Getleft();
+        root =q;
+    }
+    q->Setlchild(p);
+    p->Setrchild(ctemp);
+    p->updateht();
+    q->updateht();
 
-        q->Setpar(p->Getpar(), p); //TODO check precedence
-        if(q->Getpar() == nullptr) {
-            root =q;
-        }
-        q->Setlchild(p);
-        p->Setrchild(ctemp);
-        p->updateht();
-        q->updateht();
+}
+void LL (node * p)
+{
+    R(p);
+}
+void RR (node * p)
+{
+    L(p);
 
-    }
-    void LL (node * p)
-    {
-        R(p);
-    }
-    void RR (node * p)
-    {
-        L(p);
-
-    }
-    void LR (node * p)
-    {
-        L(p->Getleft());
-        R(p);
-    }
-    void RL (node * p)
-    {
-        R(p->Getright());
-        L(p);
-    }
+}
+void LR (node * p)
+{
+    L(p->Getleft());
+    R(p);
+}
+void RL (node * p)
+{
+    R(p->Getright());
+    L(p);
+}
 
 };
 
@@ -383,7 +431,11 @@ int main()
     avl.insert(50);
     avl.insert(21);
     avl.insert(5);
-    cout << avl.closest(22);
+    avl.insert(23);
+    cout << avl.closest(5) << endl;
+    cout << avl.closest(22) << endl;
+    cout << avl.closest(13) << endl;
+
 
     //avl.print_inorder(avl.Getroot());
 
