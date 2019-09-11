@@ -392,7 +392,34 @@ public:
         }
 
     }
-    void select (long k) {
+    long select (long KthLargest) {
+        select_helper(KthLargest, Getroot());
+    }
+    long select_helper (long k, node * cur) {
+        long sizel1;
+        if(cur->Getleft() != nullptr)
+            sizel1 = cur->Getleft()->Getsize() + 1;
+        else
+            sizel1 = 1;
+        if( sizel1 == k) {
+            return cur->Getkey();
+
+        }
+        if( k < sizel1 ) {
+            if(cur->Getleft() != nullptr)
+                return select_helper(  k, cur->Getleft());
+            else {
+                exit(-1);
+            }
+
+        }
+        if (k > sizel1) {
+           if(cur->Getright() != nullptr)
+                return select_helper( k-sizel1,  cur->Getright());
+            else {
+                exit(-1);
+            }
+        }
 
     }
 
@@ -484,6 +511,8 @@ int main()
 //    avl.insert(71);
 //    avl.insert(58);
 //    avl.insert(133);
+
+
     avl.insert(12);
     avl.insert(14);
     avl.insert(3);
@@ -492,6 +521,13 @@ int main()
     avl.insert(21);
     avl.insert(5);
     avl.print_inorder();
+//    cout <<endl <<  avl.select(1) << endl;
+//        cout <<endl <<  avl.select(2) << endl;
+//            cout <<endl <<  avl.select(3) << endl;
+//                cout <<endl <<  avl.select(4) << endl;
+//                    cout <<endl <<  avl.select(5) << endl;
+//                        cout <<endl <<  avl.select(6) << endl;
+//                            cout <<endl <<  avl.select(7) << endl;
 //    cout << avl.closest(5) << endl;
 //    cout << avl.closest(22) << endl;
 //    cout << avl.closest(13) << endl;
