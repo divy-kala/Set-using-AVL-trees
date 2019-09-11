@@ -106,6 +106,12 @@ public:
         }
 
     }
+
+    void Setpar (node * par) {
+        this -> parent = par;
+
+
+    }
     void Setlchild (node * ch)
     {
 
@@ -217,7 +223,8 @@ public:
         if(cur == nullptr)
             return;
         print_inorder_helper (cur->Getleft());
-        cout << cur->Getkey() << "(" << cur->Getsize() <<")  ";
+       // cout << cur->Getkey() << "(" << cur->Getsize() <<")  ";
+        cout << cur->Getkey() << "(" << cur->Getht() << ")  ";
         print_inorder_helper(cur->Getright());
     }
 
@@ -427,6 +434,230 @@ public:
 
     }
 
+    node * successor( node * ptr) {
+
+        return successor_helper (ptr->Getright());
+
+    }
+    node *  successor_helper (node * ptr) {
+        if(ptr->Getleft() == nullptr)
+            return ptr;
+        return ptr->Getleft();
+    }
+
+    int LorR (node * cur) {
+        if(cur->Getpar() == nullptr) {
+            return 0;                      //it is the root node
+        }
+        if (cur->Getpar()->Getleft() == cur) {
+            return -1;                     //left
+        }
+        if (cur->Getpar()->Getright() == cur) {
+            return 1;                       //right
+        }
+        return 1000;                        //error
+
+    }
+
+    void avl_delete (long key) {
+        avl_delete_helper(key, Getroot());
+
+    }
+
+
+    void avl_delete_helper (long key, node * cur)
+    {
+        if(cur == NULL)
+        {
+            return;
+        }
+        else if (cur->Getkey() > key)
+        {
+            avl_delete_helper (key, cur->Getleft() );
+        }
+        else if (cur->Getkey() < key)
+        {
+            avl_delete_helper (key, cur->Getright() );
+        }
+        else if(cur->Getkey() == key)
+        {
+            int dir = LorR( cur);
+            node * par;
+            if(cur->Getleft() == nullptr && cur->Getright() == nullptr) {
+                //leaf
+                if(dir == -1) {
+                    par = cur->Getpar();
+                    par->Setleft(nullptr) ;
+                    delete cur;
+                }
+                else if (dir == 1) {
+                    par = cur->Getpar();
+                    par->Setright(nullptr) ;
+                    delete cur;
+                }
+                else if (dir == 0) {
+                    Setroot(nullptr);
+                    delete cur;
+                }
+            }
+            else if (cur->Getleft() == nullptr && cur->Getright() != nullptr) {
+
+                //"leaf" with 1 right child only
+
+
+                if(dir == 1) {
+                    par = cur->Getpar();
+                    node * gchild = cur->Getright();
+                 //   par->Setright(gchild) ;
+                    gchild->Setpar(par, cur);
+
+                    delete cur;
+                }
+                else if (dir == -1) {
+                    par = cur->Getpar();
+                    node * gchild = cur->Getright();
+                //    par->Setleft(gchild) ;
+                    gchild->Setpar(par, cur);
+                    delete cur;
+                }
+                else if (dir == 0) {
+
+                    root = cur->Getright();
+
+                    root->Setpar(nullptr);
+                    delete cur;
+                }
+            }
+            else if (cur->Getleft() != nullptr && cur->Getright() == nullptr) {
+
+                //"leaf" with 1 left child only
+                if(dir == 1) {
+                    par = cur->Getpar();
+                    node * gchild = cur->Getleft();
+                    par->Setright(gchild) ;
+                    gchild->Setpar(par);
+                    delete cur;
+                }
+                else if (dir == -1) {
+                    par = cur->Getpar();
+                    node * gchild = cur->Getleft();
+                    par->Setleft(gchild) ;
+                    gchild->Setpar(par);
+                    delete cur;
+                }
+                else if (dir == 0) {
+                    root = cur->Getleft();
+                    root->Setpar(nullptr);
+
+                    delete cur;
+                }
+
+            }
+            else {
+                //internal node with 2 children
+                node * succ = successor(cur);
+                long succkey = succ->Getkey();
+                avl_delete_helper(succ->Getkey(), cur);
+                cur->Setkey(succkey);
+
+            }
+
+            return;
+        }
+            //may need to be sent to the end, if rotations don't handle it
+
+            cur->updateht();
+            cur->Updatesize();
+            int x;
+            node * l = cur->Getleft();
+            node * r = cur->Getright();
+            if(l != nullptr && r != nullptr) {
+                x = abs(l->Getht() - r->Getht() );
+
+            }
+            else if (l != nullptr || r != nullptr) {
+                node * tmp = (l == nullptr ) ? r : l;
+                x = tmp->Getht() + 1;
+
+            }
+            else {
+                x = 0;
+            }
+
+            if(x>=2) {
+                //imbalanced
+                node * z = cur;
+                if (l->Getht() > r->Getht() ) {
+                    //left heavy cases
+                    node * y = l;
+                    node * x;
+
+                    //check that these pointers exist
+                    if( y->Getleft() != nullptr && y->Getright() != nullptr) {
+                        if( y->Getleft()->Getht() >= y->Getright()->Getht() ) {
+                            x = y->Getleft();
+                            LL(z);
+                        }
+                        else {
+                            x = y->Getright();
+                            LR(z);
+
+                        }
+                    }
+                    else if ( y->Getleft() != nullptr || y->Getright() != nullptr ) {
+                        node * x = y->Getleft() == nullptr ? y->Getright() : y->Getleft();
+                        if(x == y->Getleft()) {
+                            LL(z);
+                        }
+                        else
+                            LR(z);
+                    }
+
+
+
+                else if( l->Getht() < r->Getht()) {
+                    //right heavy
+                    node * y = r;
+                    node * x;
+
+                    //check that these pointers exist
+                    if( y->Getleft() != nullptr && y->Getright() != nullptr) {
+                        if( y->Getleft()->Getht() <= y->Getright()->Getht() ) {
+                            x = y->Getright();
+                            RR(z);
+                        }
+                        else {
+                            x = y->Getleft();
+                            RL(z);
+
+                        }
+                    }
+                    else if ( y->Getleft() != nullptr || y->Getright() != nullptr ) {
+                        node * x = y->Getleft() == nullptr ? y->Getright() : y->Getleft();
+                        if(x == y->Getleft()) {
+                            RL(z);
+                        }
+                        else
+                            RR(z);
+                    }
+
+                }
+
+            }
+
+
+
+//         cur->updateht();
+//            cur->Updatesize();
+cur->updateht();
+        cur->Updatesize();
+        return;
+
+        }
+
+    }
+
+
 
 protected:
 
@@ -524,14 +755,35 @@ int main()
     avl.insert(50);
     avl.insert(21);
     avl.insert(5);
-//    avl.print_inorder();
-    cout <<endl <<  avl.select(1) << endl;
-        cout <<endl <<  avl.select(2) << endl;
-            cout <<endl <<  avl.select(3) << endl;
-                cout <<endl <<  avl.select(4) << endl;
-                    cout <<endl <<  avl.select(5) << endl;
-                        cout <<endl <<  avl.select(6) << endl;
-                            cout <<endl <<  avl.select(7) << endl;
+    avl.print_inorder();
+    cout << endl;
+    avl.avl_delete(7);
+    avl.print_inorder();
+    cout << endl;
+     avl.avl_delete(5);
+    avl.print_inorder();
+    cout << endl;
+     avl.avl_delete(12);
+    avl.print_inorder();
+    cout << endl;
+     avl.avl_delete(50);
+    avl.print_inorder();
+    cout << endl;
+     avl.avl_delete(21);
+    avl.print_inorder();
+    cout << endl;
+     avl.avl_delete(14);
+    avl.print_inorder();
+    cout << endl;
+     avl.avl_delete(3);
+    avl.print_inorder();
+//    cout <<endl <<  avl.select(1) << endl;
+//        cout <<endl <<  avl.select(2) << endl;
+//            cout <<endl <<  avl.select(3) << endl;
+//                cout <<endl <<  avl.select(4) << endl;
+//                    cout <<endl <<  avl.select(5) << endl;
+//                        cout <<endl <<  avl.select(6) << endl;
+//                            cout <<endl <<  avl.select(7) << endl;
 //    cout << avl.closest(5) << endl;
 //    cout << avl.closest(22) << endl;
 //    cout << avl.closest(13) << endl;
