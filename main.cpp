@@ -336,7 +336,30 @@ public:
             else
                 return curclosest;
         }
-        //FIX: handle base case
+
+    }
+    long count_in_range;
+    long count_range (long x, long y) {
+        count_in_range=0;
+        count_rang_helper(x,y,Getroot());
+        return count_in_range;
+    }
+    void count_rang_helper (long x, long y, node * cur) {
+        if(cur == nullptr)
+            return;
+        if(cur->Getkey() >= x && cur->Getkey()<=y) {
+            count_in_range++;
+            count_rang_helper(x,y,cur->Getleft());
+            count_rang_helper(x,y,cur->Getright());
+
+        }
+         else if(cur->Getkey() < x ) {
+            count_rang_helper(x,y,cur->Getright());
+        }
+         else if(cur->Getkey() > y ) {
+            count_rang_helper(x,y,cur->Getleft());
+        }
+
     }
 
 
@@ -431,11 +454,10 @@ int main()
     avl.insert(50);
     avl.insert(21);
     avl.insert(5);
-    avl.insert(23);
-    cout << avl.closest(5) << endl;
-    cout << avl.closest(22) << endl;
-    cout << avl.closest(13) << endl;
-
+//    cout << avl.closest(5) << endl;
+//    cout << avl.closest(22) << endl;
+//    cout << avl.closest(13) << endl;
+//    cout << avl.count_range(3,50);
 
     //avl.print_inorder(avl.Getroot());
 
