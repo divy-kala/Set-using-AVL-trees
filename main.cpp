@@ -189,7 +189,7 @@ public:
 
     bool contains (long key)
     {
-        contains_helper(key, Getroot());
+        return contains_helper(key, Getroot());
 
     }
 
@@ -399,13 +399,19 @@ public:
         }
 
     }
-    long select (long KthLargest) {
+    long select_largest (long KthLargest) {
 
         //select selects kth smallest, use it to select kth largest
         long n = root->Getsize();
         long k = n - KthLargest +1;
-        select_helper(k, Getroot());
+        return select_helper(k, Getroot());
     }
+
+    long select (long KthSmallest) {
+
+        return select_helper(KthSmallest, Getroot());
+    }
+
     long select_helper (long k, node * cur) {
         long sizel1;
         if(cur->Getleft() != nullptr)
@@ -431,6 +437,7 @@ public:
                 exit(-1);
             }
         }
+        return -1;
 
     }
 
