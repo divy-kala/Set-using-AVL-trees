@@ -393,7 +393,11 @@ public:
 
     }
     long select (long KthLargest) {
-        select_helper(KthLargest, Getroot());
+
+        //select selects kth smallest, use it to select kth largest
+        long n = root->Getsize();
+        long k = n - KthLargest +1;
+        select_helper(k, Getroot());
     }
     long select_helper (long k, node * cur) {
         long sizel1;
@@ -520,14 +524,14 @@ int main()
     avl.insert(50);
     avl.insert(21);
     avl.insert(5);
-    avl.print_inorder();
-//    cout <<endl <<  avl.select(1) << endl;
-//        cout <<endl <<  avl.select(2) << endl;
-//            cout <<endl <<  avl.select(3) << endl;
-//                cout <<endl <<  avl.select(4) << endl;
-//                    cout <<endl <<  avl.select(5) << endl;
-//                        cout <<endl <<  avl.select(6) << endl;
-//                            cout <<endl <<  avl.select(7) << endl;
+//    avl.print_inorder();
+    cout <<endl <<  avl.select(1) << endl;
+        cout <<endl <<  avl.select(2) << endl;
+            cout <<endl <<  avl.select(3) << endl;
+                cout <<endl <<  avl.select(4) << endl;
+                    cout <<endl <<  avl.select(5) << endl;
+                        cout <<endl <<  avl.select(6) << endl;
+                            cout <<endl <<  avl.select(7) << endl;
 //    cout << avl.closest(5) << endl;
 //    cout << avl.closest(22) << endl;
 //    cout << avl.closest(13) << endl;
