@@ -11,7 +11,6 @@ public:
         this->key = key;
         left = nullptr;
         right = nullptr;
-        balance = 0;
         height = 0;
         parent=NULL;
     }
@@ -21,8 +20,8 @@ public:
         left = nullptr;
         right = nullptr;
         parent = par;
-        balance = 0;
         height = 0;
+        //set left or right child of parent yourself
     }
 
     long Getkey()
@@ -49,14 +48,6 @@ public:
     {
         right = val;    //does not affect parents
     }
-    long Getbal()
-    {
-        return balance;
-    }
-    void Setbal(long val)
-    {
-        balance = val;
-    }
     long Getht()
     {
         return height;
@@ -71,7 +62,11 @@ public:
     }
     void Setpar(node * par, node *cur) //new parent for this, and make it the same direction child as cur
     {
-        if( par->Getright() == cur)
+        if(par == nullptr) {
+            this->parent = nullptr;
+
+        }
+        else if( par->Getright() == cur)
         {
             par->Setrchild(this);
         }
@@ -87,18 +82,20 @@ public:
     }
     void Setlchild (node * ch)
     {
+
+        left = ch;
         if(ch == nullptr)
             return;
-        left = ch;
         ch->parent = this;
 
 
     }
     void Setrchild (node * ch)
     {
+
+        right = ch;
         if(ch == nullptr)
             return;
-        right = ch;
         ch->parent = this;
 
     }
@@ -111,8 +108,11 @@ public:
             height = Getright()->Getht() + 1;
         else if(Getright() == nullptr)
             height = Getleft()->Getht() + 1;
-        else
-            height = max (Getright()->Getht(), Getleft()->Getht()) + 1;
+        else{
+            int x = Getright()->Getht();
+            int y = Getleft()->Getht();
+            height = max (x, y) + 1;
+        }
 
     }
 
@@ -124,7 +124,6 @@ private:
     node * left;
     node * right;
     node * parent;
-    int balance;
     int height;
 
 };
@@ -203,8 +202,8 @@ public:
         {
             root = new node (key);
             cur = root;
-        }
 
+        }
         else if(cur->Getkey() == key)
         {
             return;
@@ -221,7 +220,7 @@ public:
                 insert_helper (key, cur->Getleft() );
 
             int x;
-            if( cur->Getright() == nullptr) x = cur->Getleft()->Getht();
+            if( cur->Getright() == nullptr) x = cur->Getleft()->Getht() + 1;
             else x = cur->Getleft()->Getht() - cur->Getright()->Getht() ;
             //TODO:Handle this for when duplicates are allowed
             if(x > 1)
@@ -249,8 +248,8 @@ public:
             else
                 insert_helper (key, cur->Getright() );
             int x;
-            if( cur->Getleft() == nullptr) x = cur->Getright()->Getht();
-            else x = cur->Getright()->Getht() - cur->Getleft()->Getht() ;
+            if( cur->Getleft() == nullptr) x = cur->Getright()->Getht() + 1;
+            else x = cur->Getright()->Getht() - cur->Getleft()->Getht()  ;
             //TODO:Handle this for when duplicates are allowed
             if(x > 1)
             {
@@ -272,6 +271,29 @@ public:
 
     }
 
+    long closest (long key)
+    {
+        return closest_helper(key, root);
+
+    }
+    long closest_helper (long key, node * cur)
+    {
+
+        if(cur->Getkey() == key)
+        {
+            return cur->Getkey();
+        }
+        else if (cur->Getkey() > key)
+        {
+            return contains_helper (key, cur->Getleft() );
+        }
+        else if (cur->Getkey() < key)
+        {
+            return contains_helper (key, cur->Getright() );
+        }
+        //FIX: handle base case
+    }
+
 
 protected:
 
@@ -286,10 +308,14 @@ private:
         ctemp = q->Getright();
 
         q->Setpar(p->Getpar(), p);
+        if(q->Getpar() == nullptr) {
+            root =q;
+        }
         q->Setrchild(p);
         p->Setlchild(ctemp);
-        q->updateht();
         p->updateht();
+        q->updateht();
+
     }
 
     void L( node * cur)
@@ -300,10 +326,14 @@ private:
         ctemp = q->Getleft();
 
         q->Setpar(p->Getpar(), p); //TODO check precedence
+        if(q->Getpar() == nullptr) {
+            root =q;
+        }
         q->Setlchild(p);
         p->Setrchild(ctemp);
-        q->updateht();
         p->updateht();
+        q->updateht();
+
     }
     void LL (node * p)
     {
@@ -335,20 +365,28 @@ class sets
 int main()
 {
     avl_tree avl;
-    avl.insert(5);
-    avl.insert(1);
-    avl.insert(7);
-    avl.insert(51);
+//    avl.insert(5);
+//    avl.insert(1);
+//    avl.insert(7);
+//    avl.insert(51);
+//    avl.insert(12);
+//    avl.insert(73);
+//    avl.insert(56);
+//    avl.insert(14);
+//    avl.insert(71);
+//    avl.insert(58);
+//    avl.insert(133);
     avl.insert(12);
-    avl.insert(73);
-    avl.insert(56);
     avl.insert(14);
-    avl.insert(71);
-    avl.insert(58);
-    avl.insert(133);
-    avl.insert(17);
-    avl.print_inorder(avl.Getroot());
-    cout << endl << avl.contains(5) << " " << avl.contains(1487) << endl;
+    avl.insert(3);
+    avl.insert(7);
+    avl.insert(50);
+    avl.insert(21);
+    avl.insert(5);
+    cout << avl.closest(22);
+
+    //avl.print_inorder(avl.Getroot());
+
 
 
     return 0;
