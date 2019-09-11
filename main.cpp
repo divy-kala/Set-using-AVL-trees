@@ -13,6 +13,7 @@ public:
         right = nullptr;
         height = 0;
         parent=NULL;
+        size = 1;
     }
     node(long key, node * par)
     {
@@ -21,6 +22,7 @@ public:
         right = nullptr;
         parent = par;
         height = 0;
+        size = 1;
         //set left or right child of parent yourself
     }
 
@@ -31,6 +33,29 @@ public:
     void Setkey(long val)
     {
         key = val;
+    }
+    long Getsize()
+    {
+        return size;
+    }
+    void Updatesize() {
+         if(Getleft() == nullptr && Getright() == nullptr)
+            size = 1;
+        else if(Getleft() == nullptr)
+            size = Getright()->Getsize() + 1;
+        else if(Getright() == nullptr)
+            size = Getleft()->Getsize() + 1;
+        else
+        {
+            long x = Getright()->Getsize();
+            long y = Getleft()->Getsize();
+            Setsize(x+y+1);
+        }
+
+    }
+    void Setsize(long val)
+    {
+        size = val;
     }
     node * Getleft()
     {
@@ -123,6 +148,7 @@ protected:
 
 private:
     long key;
+    long size;
     node * left;
     node * right;
     node * parent;
@@ -181,15 +207,18 @@ public:
         }
     }
 
-    void print_inorder (node * cur)
+    void print_inorder ()
     {
 
+        print_inorder_helper(Getroot());
+
+    }
+    void print_inorder_helper (node * cur) {
         if(cur == nullptr)
             return;
-        print_inorder (cur->Getleft());
-        cout << cur->Getkey() << "(" << cur->Getht() <<")  ";
-        print_inorder(cur->Getright());
-
+        print_inorder_helper (cur->Getleft());
+        cout << cur->Getkey() << "(" << cur->Getsize() <<")  ";
+        print_inorder_helper(cur->Getright());
     }
 
     void insert (long key)
@@ -241,6 +270,7 @@ public:
                 }
             }
 
+
         }
         else if (cur->Getkey() < key)
         {
@@ -273,7 +303,8 @@ public:
 
 
         }
-        int asd= cur->Getkey();
+
+        cur->Updatesize();
         cur->updateht();
 
     }
@@ -361,7 +392,9 @@ public:
         }
 
     }
+    void select (long k) {
 
+    }
 
 
 protected:
@@ -385,6 +418,8 @@ void R( node * cur)
     p->Setlchild(ctemp);
     p->updateht();
     q->updateht();
+    p->Updatesize();
+    q->Updatesize();
 
 }
 
@@ -404,6 +439,8 @@ void L( node * cur)
     p->Setrchild(ctemp);
     p->updateht();
     q->updateht();
+    p->Updatesize();
+    q->Updatesize();
 
 }
 void LL (node * p)
@@ -454,6 +491,7 @@ int main()
     avl.insert(50);
     avl.insert(21);
     avl.insert(5);
+    avl.print_inorder();
 //    cout << avl.closest(5) << endl;
 //    cout << avl.closest(22) << endl;
 //    cout << avl.closest(13) << endl;
