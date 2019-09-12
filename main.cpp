@@ -249,6 +249,7 @@ public:
         }
         else if (cur->Getkey() > key)
         {
+            //left
             if(cur->Getleft() == NULL)
             {
                 node * child = new node (key, cur);
@@ -263,7 +264,8 @@ public:
                 x = cur->Getleft()->Getht() + 1;
             else
                 x = cur->Getleft()->Getht() - cur->Getright()->Getht() ;
-            //TODO:Handle this for when duplicates are allowed
+
+            //TODO:Handle this for when duplicates are allowed make sure duplicate insertions are done on left, then for LL case it beocmes >=
             if(x > 1)
             {
                 if(cur->Getleft()->Getkey() > key)
@@ -271,7 +273,7 @@ public:
                     //RL
                     LL(cur);
                 }
-                else if (cur->Getright()->Getkey() < key)
+                else if (cur->Getleft()->Getkey() < key)
                 {
                     LR(cur);
                 }
@@ -281,8 +283,10 @@ public:
         }
         else if (cur->Getkey() < key)
         {
+            //go right
             if(cur->Getright() == NULL)
             {
+                //insert if right does not exist
                 node * child = new node (key, cur);
                 cur->Setrchild(child);
 
@@ -754,36 +758,36 @@ int main()
 //    avl.insert(58);
 //    avl.insert(133);
 
-
-    avl.insert(12);
-    avl.insert(14);
-    avl.insert(3);
-    avl.insert(7);
-    avl.insert(50);
-    avl.insert(21);
-    avl.insert(5);
-    avl.print_inorder();
-    cout << endl;
-    avl.avl_delete(7);
-    avl.print_inorder();
-    cout << endl;
-     avl.avl_delete(5);
-    avl.print_inorder();
-    cout << endl;
-     avl.avl_delete(12);
-    avl.print_inorder();
-    cout << endl;
-     avl.avl_delete(50);
-    avl.print_inorder();
-    cout << endl;
-     avl.avl_delete(21);
-    avl.print_inorder();
-    cout << endl;
-     avl.avl_delete(14);
-    avl.print_inorder();
-    cout << endl;
-     avl.avl_delete(3);
-    avl.print_inorder();
+//
+//    avl.insert(12);
+//    avl.insert(14);
+//    avl.insert(3);
+//    avl.insert(7);
+//    avl.insert(50);
+//    avl.insert(21);
+//    avl.insert(5);
+//    avl.print_inorder();
+//    cout << endl;
+//    avl.avl_delete(7);
+//    avl.print_inorder();
+//    cout << endl;
+//     avl.avl_delete(5);
+//    avl.print_inorder();
+//    cout << endl;
+//     avl.avl_delete(12);
+//    avl.print_inorder();
+//    cout << endl;
+//     avl.avl_delete(50);
+//    avl.print_inorder();
+//    cout << endl;
+//     avl.avl_delete(21);
+//    avl.print_inorder();
+//    cout << endl;
+//     avl.avl_delete(14);
+//    avl.print_inorder();
+//    cout << endl;
+//     avl.avl_delete(3);
+//    avl.print_inorder();
 //    cout <<endl <<  avl.select(1) << endl;
 //        cout <<endl <<  avl.select(2) << endl;
 //            cout <<endl <<  avl.select(3) << endl;
@@ -798,7 +802,15 @@ int main()
 
     //avl.print_inorder(avl.Getroot());
 
-
+    long n ;
+    cin >> n;
+    for (long i = 0 ; i < n; i++) {
+        long x;
+        cin >> x;
+        avl.insert(x);
+        avl.print_inorder();
+        cout << endl;
+    }
 
     return 0;
 }
