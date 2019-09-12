@@ -458,9 +458,7 @@ public:
     }
 
     int LorR (node * cur) {
-        if(cur->Getkey() == 57256) {
-            cout << "haha";
-        }
+
         if(cur->Getpar() == nullptr) {
             return 0;                      //it is the root node
         }
@@ -743,68 +741,64 @@ void RL (node * p)
 
 class sets
 {
+    public:
+    avl_tree avl;
 
+    void insert( long key ) {
+        avl.insert(key);
+
+    }
+    void remove (long key) {
+        avl.avl_delete(key);
+    }
+    bool contains( long key) {
+        return avl.contains(key);
+    }
+    long closest (long key) {
+        return avl.closest(key);
+    }
+    long find_kth_largest(long k) {
+        return avl.select_largest(k);
+    }
+    long range (long a, long b) {
+        return avl.count_range(a,b);
+    }
 };
 
 int main()
 {
-    avl_tree avl;
-//    avl.insert(5);
-//    avl.insert(1);
-//    avl.insert(7);
-//    avl.insert(51);
-//    avl.insert(12);
-//    avl.insert(73);
-//    avl.insert(56);
-//    avl.insert(14);
-//    avl.insert(71);
-//    avl.insert(58);
-//    avl.insert(133);
+//    avl_tree avl;
 
-//
-//    avl.insert(12);
-//    avl.insert(14);
-//    avl.insert(3);
-//    avl.insert(7);
-//    avl.insert(50);
-//    avl.insert(21);
-//    avl.insert(5);
-//    avl.print_inorder();
-//    cout << endl;
-//    avl.avl_delete(7);
-//    avl.print_inorder();
-//    cout << endl;
-//     avl.avl_delete(5);
-//    avl.print_inorder();
-//    cout << endl;
-//     avl.avl_delete(12);
-//    avl.print_inorder();
-//    cout << endl;
-//     avl.avl_delete(50);
-//    avl.print_inorder();
-//    cout << endl;
-//     avl.avl_delete(21);
-//    avl.print_inorder();
-//    cout << endl;
-//     avl.avl_delete(14);
-//    avl.print_inorder();
-//    cout << endl;
-//     avl.avl_delete(3);
-//    avl.print_inorder();
-//    cout <<endl <<  avl.select(1) << endl;
-//        cout <<endl <<  avl.select(2) << endl;
-//            cout <<endl <<  avl.select(3) << endl;
-//                cout <<endl <<  avl.select(4) << endl;
-//                    cout <<endl <<  avl.select(5) << endl;
-//                        cout <<endl <<  avl.select(6) << endl;
-//                            cout <<endl <<  avl.select(7) << endl;
-//    cout << avl.closest(5) << endl;
-//    cout << avl.closest(22) << endl;
-//    cout << avl.closest(13) << endl;
-//    cout << avl.count_range(3,50);
 
     //avl.print_inorder(avl.Getroot());
 
+//    long n ;
+//    cin >> n;
+//    vector<long> input;
+//    for (long i = 0 ; i < n; i++) {
+//        long x;
+//        cin >> x;
+//        input.push_back(x);
+//    }
+//    for (long i = 0 ; i < n; i++) {
+//        long x = input[i];
+//        avl.insert(x);
+//
+//        cout << endl;
+//    }
+//    avl.print_inorder();
+//    getchar();
+//    getchar();
+//     cout << "\n\n\n*********************deletion***********************\n\n\n" ;
+//
+//    for (long i = n-1 ; i >=0; i--) {
+//        long x = input[i];
+//        avl.avl_delete(x);
+//
+//        cout << endl;
+//    }
+//    avl.print_inorder();
+    sets s;
     long n ;
     cin >> n;
     vector<long> input;
@@ -813,20 +807,26 @@ int main()
         cin >> x;
         input.push_back(x);
     }
+
     for (long i = 0 ; i < n; i++) {
         long x = input[i];
-        avl.insert(x);
-        avl.print_inorder();
-        cout << endl;
+        s.insert(x);
+
     }
+    s.avl.print_inorder();
+    cout << "height of the tree is " << s.avl.Getroot()->Getht();
+    cout << endl << s.contains(99999) << " " << s.contains(-5);
+    cout << endl << s.closest(150000) << " " << s.find_kth_largest(1) << " " << s.range(0,5);
+    getchar();
+    getchar();
      cout << "\n\n\n*********************deletion***********************\n\n\n" ;
 
-    for (long i = n-1 ; i >=0; i--) {
+    for (long i = n-1 ; i >=10; i--) {
         long x = input[i];
-        avl.avl_delete(x);
-        avl.print_inorder();
-        cout << endl;
-    }
+        s.remove(x);
 
+    }
+    s.avl.print_inorder();
+//  cout << "height of the tree is " << s.avl.Getroot()->Getht();
     return 0;
 }
