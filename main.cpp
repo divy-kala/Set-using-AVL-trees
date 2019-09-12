@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <bits/stdc++.h>
 using namespace std;
 
 
@@ -15,6 +15,7 @@ public:
         parent=NULL;
         size = 1;
     }
+
     node(long key, node * par)
     {
         this->key = key;
@@ -453,10 +454,13 @@ public:
     node *  successor_helper (node * ptr) {
         if(ptr->Getleft() == nullptr)
             return ptr;
-        return ptr->Getleft();
+        return successor_helper(ptr->Getleft());
     }
 
     int LorR (node * cur) {
+        if(cur->Getkey() == 57256) {
+            cout << "haha";
+        }
         if(cur->Getpar() == nullptr) {
             return 0;                      //it is the root node
         }
@@ -480,22 +484,28 @@ public:
     {
         if(cur == NULL)
         {
+            //not found case
             return;
         }
         else if (cur->Getkey() > key)
         {
+            //search left
             avl_delete_helper (key, cur->Getleft() );
         }
         else if (cur->Getkey() < key)
         {
+            //search right
             avl_delete_helper (key, cur->Getright() );
         }
         else if(cur->Getkey() == key)
         {
+            //delete case
+
             int dir = LorR( cur);
             node * par;
+
             if(cur->Getleft() == nullptr && cur->Getright() == nullptr) {
-                //leaf
+                //delete leaf
                 if(dir == -1) {
                     par = cur->Getpar();
                     par->Setleft(nullptr) ;
@@ -513,22 +523,14 @@ public:
             }
             else if (cur->Getleft() == nullptr && cur->Getright() != nullptr) {
 
-                //"leaf" with 1 right child only
+                //delete "leaf" with 1 right child only
 
-
-                if(dir == 1) {
+                if(dir == 1 || dir == -1) {
                     par = cur->Getpar();
                     node * gchild = cur->Getright();
                  //   par->Setright(gchild) ;
                     gchild->Setpar(par, cur);
 
-                    delete cur;
-                }
-                else if (dir == -1) {
-                    par = cur->Getpar();
-                    node * gchild = cur->Getright();
-                //    par->Setleft(gchild) ;
-                    gchild->Setpar(par, cur);
                     delete cur;
                 }
                 else if (dir == 0) {
@@ -541,19 +543,11 @@ public:
             }
             else if (cur->Getleft() != nullptr && cur->Getright() == nullptr) {
 
-                //"leaf" with 1 left child only
-                if(dir == 1) {
+                //delete "leaf" with 1 left child only
+                if(dir == 1 || dir == -1) {
                     par = cur->Getpar();
                     node * gchild = cur->Getleft();
-                    par->Setright(gchild) ;
-                    gchild->Setpar(par);
-                    delete cur;
-                }
-                else if (dir == -1) {
-                    par = cur->Getpar();
-                    node * gchild = cur->Getleft();
-                    par->Setleft(gchild) ;
-                    gchild->Setpar(par);
+                    gchild->Setpar(par, cur);
                     delete cur;
                 }
                 else if (dir == 0) {
@@ -565,7 +559,7 @@ public:
 
             }
             else {
-                //internal node with 2 children
+                //delete internal node with 2 children
                 node * succ = successor(cur);
                 long succkey = succ->Getkey();
                 avl_delete_helper(succ->Getkey(), cur);
@@ -575,10 +569,13 @@ public:
 
             return;
         }
-            //may need to be sent to the end, if rotations don't handle it
+
 
             cur->updateht();
             cur->Updatesize();
+
+
+            //Fix AVL tree
             int x;
             node * l = cur->Getleft();
             node * r = cur->Getright();
@@ -594,17 +591,21 @@ public:
             else {
                 x = 0;
             }
-
+            int lht,rht;
+            lht = (l == nullptr)? -1 : l->Getht();
+            rht = (r == nullptr)? -1 : r->Getht();
             if(x>=2) {
-                //imbalanced
+                //imbalance
                 node * z = cur;
-                if (l->Getht() > r->Getht() ) {
+
+                if (lht > rht ) {
                     //left heavy cases
                     node * y = l;
                     node * x;
 
-                    //check that these pointers exist
+                    // y has both children
                     if( y->Getleft() != nullptr && y->Getright() != nullptr) {
+
                         if( y->Getleft()->Getht() >= y->Getright()->Getht() ) {
                             x = y->Getleft();
                             LL(z);
@@ -615,6 +616,7 @@ public:
 
                         }
                     }
+                    //y has only 1 child
                     else if ( y->Getleft() != nullptr || y->Getright() != nullptr ) {
                         node * x = y->Getleft() == nullptr ? y->Getright() : y->Getleft();
                         if(x == y->Getleft()) {
@@ -626,12 +628,12 @@ public:
 
 
 
-                else if( l->Getht() < r->Getht()) {
+                else if( lht < rht) {
                     //right heavy
                     node * y = r;
                     node * x;
 
-                    //check that these pointers exist
+
                     if( y->Getleft() != nullptr && y->Getright() != nullptr) {
                         if( y->Getleft()->Getht() <= y->Getright()->Getht() ) {
                             x = y->Getright();
@@ -660,11 +662,12 @@ public:
 
 //         cur->updateht();
 //            cur->Updatesize();
-cur->updateht();
-        cur->Updatesize();
-        return;
+
 
         }
+        cur->updateht();
+        cur->Updatesize();
+        return;
 
     }
 
@@ -804,10 +807,23 @@ int main()
 
     long n ;
     cin >> n;
+    vector<long> input;
     for (long i = 0 ; i < n; i++) {
         long x;
         cin >> x;
+        input.push_back(x);
+    }
+    for (long i = 0 ; i < n; i++) {
+        long x = input[i];
         avl.insert(x);
+        avl.print_inorder();
+        cout << endl;
+    }
+     cout << "\n\n\n*********************deletion***********************\n\n\n" ;
+
+    for (long i = n-1 ; i >=0; i--) {
+        long x = input[i];
+        avl.avl_delete(x);
         avl.print_inorder();
         cout << endl;
     }
