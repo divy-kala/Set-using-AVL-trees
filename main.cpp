@@ -408,6 +408,11 @@ public:
 
         //select selects kth smallest, use it to select kth largest
         long n = root->Getsize();
+
+        if(KthLargest<=0 || KthLargest>n) {
+            cout << "invalid input for kth largest" << endl;
+            return -1;
+        }
         long k = n - KthLargest +1;
         return select_helper(k, Getroot());
     }
@@ -807,26 +812,27 @@ int main()
         cin >> x;
         input.push_back(x);
     }
-
-    for (long i = 0 ; i < n; i++) {
-        long x = input[i];
-        s.insert(x);
-
-    }
-    s.avl.print_inorder();
-    cout << "height of the tree is " << s.avl.Getroot()->Getht();
-    cout << endl << s.contains(99999) << " " << s.contains(-5);
-    cout << endl << s.closest(150000) << " " << s.find_kth_largest(1) << " " << s.range(0,5);
-    getchar();
-    getchar();
-     cout << "\n\n\n*********************deletion***********************\n\n\n" ;
-
-    for (long i = n-1 ; i >=10; i--) {
-        long x = input[i];
-        s.remove(x);
-
-    }
-    s.avl.print_inorder();
+//
+//    for (long i = 0 ; i < n; i++) {
+//        long x = input[i];
+//        s.insert(x);
+//
+//    }
+//    s.avl.print_inorder();
+//    cout << "height of the tree is " << s.avl.Getroot()->Getht();
+//    cout << endl << s.contains(99999) << " " << s.contains(-5);
+//    cout << endl << s.closest(150000) << " " << s.find_kth_largest(0) << " " << s.range(-50,50000000);
+//    getchar();
+//    getchar();
+//
+//     cout << "\n\n\n*********************deletion***********************\n\n\n" ;
+//
+//    for (long i = n-1 ; i >=10; i--) {
+//        long x = input[i];
+//        s.remove(x);
+//
+//    }
+//    s.avl.print_inorder();
 //  cout << "height of the tree is " << s.avl.Getroot()->Getht();
     return 0;
 }
